@@ -1,3 +1,6 @@
+import requests
+import time
+
 tournament_query = """
 query TournamentEvents($tourneySlug:String!) {
   tournament(slug: $tourneySlug) {
@@ -7,6 +10,69 @@ query TournamentEvents($tourneySlug:String!) {
       id
       name
       slug
+    }
+  }
+}
+"""
+
+participant_query = """
+query TournamentParticipants($tourneySlug: String!, $page: Int!, $perPage: Int!) {
+  tournament(slug: $tourneySlug) {
+    participants (query: {
+      perPage: $perPage, 
+      page: $page
+      }) {
+      pageInfo {
+        totalPages
+      }
+      nodes {
+        player {
+          id
+          gamerTag
+        }
+        entrants {
+          isDisqualified
+          id
+          event {
+            name
+            videogame {
+              id
+              displayName
+            }
+          }
+        }
+      } 
+    }
+  }
+}
+"""
+
+entrant_query = """
+query EntrantSets($entrantId: ID!) {
+  entrant(id: $entrantId) {
+    event {
+      id
+      name
+      videogame {
+        id
+        displayName
+      }
+    }
+  }
+}
+"""
+
+event_entrant_query = """
+query Entrants($entrantId: ID!) {
+  entrant(id: $entrantId) {
+    standing {
+      placement
+    }
+    event {
+      numEntrants
+      videogame {
+        id
+      }
     }
   }
 }
@@ -97,3 +163,22 @@ query VideogameQuery ($name: String!) {
     }
   }
 }"""
+
+def run_query(query, variables=None):
+    url = 'https://api.start.gg/gql/alpha'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer c6df148d662dee8949027063fabc4a46'
+    }
+    while True:
+        response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        elif response.status_code == 429:
+            print("Rate limit exceeded. Waiting for 30 seconds before retrying...")
+            time.sleep(30)
+        elif response.status_code == 503:
+            print("Service unavailable. Waiting for 30 seconds before retrying...")
+            time.sleep(30)
+        else:
+            raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")

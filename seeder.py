@@ -1,32 +1,13 @@
-import requests
+
 import query as q
 import json
-import time
 
 auth = open("auth.txt", "r")
 
-def run_query(query, variables=None):
-    url = 'https://api.start.gg/gql/alpha'
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer' + auth.read()
-    }
-    while True:
-        response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 429:
-            print("Rate limit exceeded. Waiting for 60 seconds before retrying...")
-            time.sleep(60)
-        elif response.status_code == 503:
-            print("Service unavailable. Waiting for 60 seconds before retrying...")
-            time.sleep(60)
-        else:
-            raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
 
 
 def get_events_id(t_name):
-    result = run_query(q.tournament_query, {"tourneySlug": t_name})
+    result = q.run_query(q.tournament_query, {"tourneySlug": t_name})
     events_id = {}
     for event in result['data']['tournament']['events']:
         events_id[event['slug']] = event['id']
@@ -34,7 +15,7 @@ def get_events_id(t_name):
     return events_id
 
 def get_game_id(game_name):
-    return run_query(q.gameId_query, {"name": game_name})["data"]["videogames"]["nodes"][0]["id"]
+    return q.run_query(q.gameId_query, {"name": game_name})["data"]["videogames"]["nodes"][0]["id"]
 
 def get_event_players(t_name, byName=True):
     events_id = get_events_id(t_name)
@@ -45,7 +26,7 @@ def get_event_players(t_name, byName=True):
         page = 1
         per_page = 50
         while True:
-            result = run_query(q.players_query, {"eventId": event_id, "page": page, "perPage": per_page})
+            result = q.run_query(q.players_query, {"eventId": event_id, "page": page, "perPage": per_page})
             entrants = result['data']['event']['entrants']['nodes']
             for entrant in entrants:
                 for participant in entrant['participants']:
@@ -67,7 +48,7 @@ def get_player_win_rate(player_id, videogame_id):
         "perPage": 20
     }
 
-    result = run_query(q.recent_sets_query, variables)
+    result = q.run_query(q.recent_sets_query, variables)
     sets = result['data']['player']['sets']['nodes']
     
     amount_of_wins = 0
@@ -94,12 +75,12 @@ def get_ordered_gamer_tags(tournament_name):
     for event, players in event_players.items():
         players_dict = []
         for player_id in players:
-            win_rate = get_player_win_rate(player_id, run_query(q.event_query, {"slug": event})['data']['event']['videogame']['id'])
-            player_info = run_query(q.player_query, {"playerId": player_id})
+            win_rate = get_player_win_rate(player_id, q.run_query(q.event_query, {"slug": event})['data']['event']['videogame']['id'])
+            player_info = q.run_query(q.player_query, {"playerId": player_id})
             # print(player_info)
             gamer_tag = player_info['data']['player']['gamerTag']
             players_dict.append({gamer_tag: win_rate})
-        player_win_rates[run_query(q.event_query, {"slug": event})["data"]['event']["name"]] = players_dict
+        player_win_rates[q.run_query(q.event_query, {"slug": event})["data"]['event']["name"]] = players_dict
     
     ordered_gamer_tags = {}
     for event, players in player_win_rates.items():
@@ -112,4 +93,3 @@ print("Writing to data.json, please wait...")
 with open('data.json', 'w') as f:
     json.dump(get_ordered_gamer_tags(tournament_name), f, indent=4)
 print("Done!")
-
