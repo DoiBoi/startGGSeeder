@@ -1,5 +1,6 @@
 import requests
 import time
+from datetime import datetime
 
 tournament_query = """
 query TournamentEvents($tourneySlug:String!) {
@@ -164,21 +165,63 @@ query VideogameQuery ($name: String!) {
   }
 }"""
 
-def run_query(query, variables=None):
+def create_entrant_query(num_events):
+    query = "query EventEntrants("
+    for i in range(num_events):
+        query += f"$E{i+1}: ID! "
+    query += ") {"
+    
+    for i in range(num_events):
+        query += f"""
+            E{i+1}: entrant(id: $E{i+1})""" + """{
+              standing {
+                placement
+              }
+              event {
+                numEntrants
+                videogame {
+                  id
+                }
+              }
+            }
+        """
+    query += "}"
+    return query
+
+def run_query(query, variables=None, retries=0):
     url = 'https://api.start.gg/gql/alpha'
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer c6df148d662dee8949027063fabc4a46'
+        'Authorization': 'Bearer [AUTHORIZATION_TOKEN]'  # Replace with your own token
     }
+    max_retries = 5  # Adjust as needed
+    base_sleep = 30  # Base sleep time for exponential backoff (in seconds)
+    
     while True:
-        response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers)
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 429:
-            print("Rate limit exceeded. Waiting for 30 seconds before retrying...")
+        try:
+            response = requests.post(
+                url,
+                json={'query': query, 'variables': variables},
+                headers=headers,
+                timeout=30  # Adjust timeout if necessary
+            )
+            if response.status_code == 200:
+                return response.json()
+            elif response.status_code == 429:
+                if (retries > 9):
+                    retries = 0
+                sleep_time = base_sleep * (2 ** retries)
+                print(f"{datetime.now()} - Rate limit exceeded. Waiting for {sleep_time} seconds before retrying...")
+                time.sleep(sleep_time)
+                retries += 1
+            elif response.status_code == 503:
+                print(f"{datetime.now()} - Service unavailable. Waiting for 60 seconds before retrying...")
+                time.sleep(60)
+            else:
+                raise Exception(f"{datetime.now()} - Query failed to run with a status code of {response.status_code}. {query}")
+        except requests.exceptions.ConnectionError as err:
+            retries += 1
+            if retries > max_retries:
+                raise Exception(f"{datetime.now()} - Max connection retries reached. Aborting.") from err
+            print(f"{datetime.now()} - Connection error occurred, retrying ({retries}/{max_retries}) in 30 seconds...")
             time.sleep(30)
-        elif response.status_code == 503:
-            print("Service unavailable. Waiting for 30 seconds before retrying...")
-            time.sleep(30)
-        else:
-            raise Exception(f"Query failed to run by returning code of {response.status_code}. {query}")
