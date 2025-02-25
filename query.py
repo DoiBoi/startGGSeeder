@@ -34,6 +34,7 @@ query TournamentParticipants($tourneySlug: String!, $page: Int!, $perPage: Int!)
         entrants {
           isDisqualified
           id
+          name
           event {
             name
             videogame {
@@ -177,6 +178,12 @@ def create_entrant_query(num_events):
               standing {
                 placement
               }
+              paginatedSets (page: 1, perPage:20) {
+                nodes {
+                  winnerId 
+                  displayScore
+                }
+              }
               event {
                 numEntrants
                 videogame {
@@ -192,7 +199,7 @@ def run_query(query, variables=None, retries=0):
     url = 'https://api.start.gg/gql/alpha'
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer [AUTHORIZATION_TOKEN]'  # Replace with your own token
+        'Authorization': 'Bearer c6df148d662dee8949027063fabc4a46'  # Replace with your own token
     }
     max_retries = 5  # Adjust as needed
     base_sleep = 30  # Base sleep time for exponential backoff (in seconds)
