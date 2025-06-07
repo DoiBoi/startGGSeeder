@@ -7,10 +7,9 @@ from datetime import datetime
 import re
 
 # Global videogames registry; keys are sanitized game names.
-videogames = {}
 
 other_vsb_events = ["okizeme", "okizeme-countdown-30", "okizeme-3-1", "okizeme-the-final",
-               "okizeme-14-1", "okizeme-a-fighting-game-monthly", "okizeme-19-2", "burnaby-boo-rawl"]
+               "okizeme-14-1", "okizeme-a-fighting-game-monthly", "okizeme-19-2"]
 ubc_events = ["end-of-heights-tournament-2", "ubc-matchup-monday-4-1", "ubc-matchup-monday-5-1", "ubc-summer-slam", "ubc-summer-slam-2", "ubc-summer-slam-3", "ubc-sunset-showdown",
               "end-of-heights-3", "ubc-fgc-autumn-assault-1", "ubc-fgc-winter-wavedash-1"]
 
@@ -54,7 +53,7 @@ def get_player_ids_and_games(tournament_name, videogame_list, existing_games=Fal
         i += 1
     return pd.DataFrame({'player_id': player_ids, 'player_name': player_names, 'entrants': entrants, 'alias': alias}), entrants
 
-def append_to_dataframe(df, row): 
+def append_to_dataframe(df, row, videogames): 
     if row['player_id'] in df['player_id'].values:
         idx = df.index[df['player_id'] == row['player_id']][0]
 
@@ -119,7 +118,7 @@ def iterate_through_tournament_series(tournament_series, num_tournaments, df=pd.
         ith_df, entrants = get_player_ids_and_games(f"{tournament_series}-{i}", videogames.values(), existing_games=False)
         entrants_total += entrants
         for index, row in ith_df.iterrows():
-            df = append_to_dataframe(df, row)
+            df = append_to_dataframe(df, row, videogames)
     return df, entrants_total
 
 def iterate_through_tournament_array(tournaments, df=pd.DataFrame({'player_id': [], 'player_name': [], 'entrants': [], 'alias': []}), 
@@ -130,7 +129,7 @@ def iterate_through_tournament_array(tournaments, df=pd.DataFrame({'player_id': 
         ith_df, entrants = get_player_ids_and_games(tournament, videogames.values(), existing_games)
         entrants_total += entrants
         for index, row in ith_df.iterrows():
-            df = append_to_dataframe(df, row)
+            df = append_to_dataframe(df, row, videogames)
     return df, entrants_total
 
 def append_tournament(df, tournament_name, videogames={}, 
@@ -138,7 +137,7 @@ def append_tournament(df, tournament_name, videogames={},
     print(f"{datetime.now()} - Reading Tournament: " + tournament_name)
     ith_df, entrants = get_player_ids_and_games(tournament_name, videogames.values(), existing_games)
     for index, row in ith_df.iterrows():
-        df = append_to_dataframe(df, row)
+        df = append_to_dataframe(df, row, videogames)
     return df, entrants
 
 def get_player_id_by_name(name, players_df):
@@ -167,6 +166,7 @@ def update_points_on_upset(entrant_sets, players_df, game_elo_df, player_points_
     pattern = r"(.+?)\s+([\d\.]+)\s*-\s*(.+?)\s+([\d\.]+)"
     for ent in entrant_sets:
         display_score = ent.get("displayScore", "")
+        # print(display_score)
         if display_score:
             match = re.search(pattern, display_score)
         else:
@@ -189,11 +189,11 @@ def update_points_on_upset(entrant_sets, players_df, game_elo_df, player_points_
                     pts2 = pts2_series.iloc[0]
                     # print(id1, id2, id_name)
                     if pts1 < pts2 and score1 > score2:
-                        player_points_dict[id1] = player_points_dict.get(id1, 0.0) + pts2 / 4
-                        print(f"{datetime.now()} - Upset detected! {name1} {score1} - {score2} {name2}, adding {pts2/4} points to {name1}.")
+                        player_points_dict[id1] = player_points_dict.get(id1, 0.0) + pts2 / 8
+                        print(f"{datetime.now()} - Upset detected! {name1} {score1} - {score2} {name2}, adding {pts2/8} points to {name1}.")
                     if pts2 < pts1 and score2 > score1:
-                        player_points_dict[id2] = player_points_dict.get(id1, 0.0) + pts1 / 4
-                        print(f"{datetime.now()} - Upset detected! {name1} {score1} - {score2} {name2}, adding {pts2/4} points to {name2}.")
+                        player_points_dict[id2] = player_points_dict.get(id1, 0.0) + pts1 / 8
+                        print(f"{datetime.now()} - Upset detected! {name1} {score1} - {score2} {name2}, adding {pts2/8} points to {name2}.")
     return
 
 def process_batch(response, num_entrants):
@@ -225,7 +225,7 @@ def process_batch(response, num_entrants):
                 points_list.append(0.0)
     return points_list
 
-def generate_points_batch(df, target_game_id, entrants_list):
+def generate_points_batch(df, target_game_id, entrants_list, videogames):
     # This version traverses only the passed-in entrants_list
     # instead of the entire df.
     current_game_elo_df = None
@@ -299,7 +299,7 @@ def generate_points_batch(df, target_game_id, entrants_list):
                     update_points_on_upset(nodes, df, current_game_elo_df, player_points)
     return player_points
 
-def generate_elo(player_df, new_entrants):
+def generate_elo(player_df, new_entrants, videogames):
     """
     For each videogame in the global 'videogames' dictionary, computes an Elo ranking DataFrame
     where points are calculated for the newly added entrants only.
@@ -309,7 +309,7 @@ def generate_elo(player_df, new_entrants):
         game_id = game_info["id"]
         print(f"{datetime.now()} - Generating ELO for {game_name}... ")
         # Pass new_entrants to generate_points_batch
-        player_points = generate_points_batch(player_df, game_id, new_entrants)
+        player_points = generate_points_batch(player_df, game_id, new_entrants, videogames)
         elo_data = []
         for player_id, pts in player_points.items():
             if pts > 0:
@@ -370,10 +370,10 @@ def load_players(file_path="data/players.json"):
     else:
         return pd.DataFrame()
 
-def update_players_df(old_players, new_players):
+def update_players_df(old_players, new_players, videogames):
     if old_players.empty: return new_players
     for index, row in new_players.iterrows():
-        old_players = append_to_dataframe(old_players, row)
+        old_players = append_to_dataframe(old_players, row, videogames)
     return old_players
 
 def save_game_elo_data(videogames, elo_dataframes):
@@ -406,66 +406,81 @@ loaded_players = load_players()
 # print("Videogames:", videogames)
 
 # Initiate the okis and ubc events
-players_df, entrants = iterate_through_tournament_series("party-battle", 6)
-elo_dataframes = generate_elo(players_df, entrants)
-updated_elo = update_saved_elo(loaded_elo, elo_dataframes)
-save_game_elo_data(videogames, updated_elo)
+# players_df, entrants = iterate_through_tournament_array(other_vsb_events, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
+# updated_elo = update_saved_elo(loaded_elo, elo_dataframes)
+# save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("okizeme", 10)
-# elo_dataframes = generate_elo(players_df, entrants)
+
+# players_df, entrants = iterate_through_tournament_series("party-battle", 6, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("okizeme", 20, start=11)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("okizeme", 10, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("okizeme", 30, start=21)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("okizeme", 20, start=11, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("okizeme", 40, start=31)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("okizeme", 30, start=21, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("ubc-fgc-frenzy-friday", 11)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("okizeme", 40, start=31, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_series("okizeme", 49, start=41)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("ubc-fgc-frenzy-friday", 11, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_array(ubc_events)
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_series("okizeme", 49, start=41, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-# players_df, entrants = iterate_through_tournament_array(["ubc-fgc-winter-wavedash-2"])
-# elo_dataframes = generate_elo(players_df, entrants)
+# players_df, entrants = iterate_through_tournament_array(["burnaby-boo-rawl"], videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
 # updated_elo = update_saved_elo(updated_elo, elo_dataframes)
 # save_game_elo_data(videogames, updated_elo)
 
-new_players = update_players_df(loaded_players, players_df)
-save_videogames(videogames)
-save_players(new_players)
+
+# players_df, entrants = iterate_through_tournament_array(ubc_events, videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
+# updated_elo = update_saved_elo(updated_elo, elo_dataframes)
+# save_game_elo_data(videogames, updated_elo)
+
+# players_df, entrants = iterate_through_tournament_array(["ubc-fgc-winter-wavedash-2"], videogames=videogames)
+# elo_dataframes = generate_elo(players_df, entrants, videogames)
+# updated_elo = update_saved_elo(updated_elo, elo_dataframes)
+# save_game_elo_data(videogames, updated_elo)
+
+# new_players = update_players_df(loaded_players, players_df, videogames)
+# save_videogames(videogames)
+# save_players(new_players)
 
 def run(tournament_name, type, num=1, start=1):
+    loaded_videogames = load_videogames()
+    loaded_elo = load_elo_dataframes(loaded_videogames)
+    loaded_players = load_players()
     if type == "array":
-        players_df, entrants = iterate_through_tournament_array(tournament_name)
+        players_df, entrants = iterate_through_tournament_array(tournament_name, videogames=loaded_videogames)
     if type == "series":
-        players_df, entrants = iterate_through_tournament_series(tournament_name, num, start=start)
-    elo_dataframes = generate_elo(players_df, entrants)
+        players_df, entrants = iterate_through_tournament_series(tournament_name, num, start=start, videogames=loaded_videogames)
+    elo_dataframes = generate_elo(players_df, entrants, loaded_videogames)
     updated_elo = update_saved_elo(loaded_elo, elo_dataframes)
 
-    save_game_elo_data(videogames, updated_elo)
-    new_players = update_players_df(loaded_players, players_df)
-    save_videogames(videogames)
+    save_game_elo_data(loaded_videogames, updated_elo)
+    new_players = update_players_df(loaded_players, players_df, loaded_videogames)
+    save_videogames(loaded_videogames)
     save_players(new_players)
 
 type = input("Enter type (serires or array): ")

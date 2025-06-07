@@ -2,9 +2,6 @@
 import query as q
 import json
 
-auth = open("auth.txt", "r")
-
-
 
 def get_events_id(t_name):
     result = q.run_query(q.tournament_query, {"tourneySlug": t_name})
