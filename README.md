@@ -2,4 +2,4 @@
 
 Currently in heavy development.
 
-To collaborators, I'm wokring on processing startgg's return data, an example of how it would looks like is in items.json
+To collaborators, I'm working on processing start.gg's return data, an example of how it would looks like is in items.json
