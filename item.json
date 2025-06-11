@@ -1,0 +1,1460 @@
+{
+  "data": {
+    "E0": {
+      "numEntrants": 17,
+      "videogame": {
+        "name": "BlazBlue: Central Fiction",
+        "id": 37
+      },
+      "entrants": {
+        "nodes": [
+          {
+            "id": 19076195,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Doc",
+                  "id": 993567
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073472,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "nothing",
+                  "id": 657944
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073367,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Ringo",
+                  "id": 573624
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073086,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Penguinos",
+                  "id": 1198933
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072912,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Kyros",
+                  "id": 261982
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072548,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Impulse",
+                  "id": 513276
+                }
+              }
+            ]
+          },
+          {
+            "id": 19071125,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Boblebaguette",
+                  "id": 2380111
+                }
+              }
+            ]
+          },
+          {
+            "id": 19032550,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Milly Tea",
+                  "id": 3852161
+                }
+              }
+            ]
+          },
+          {
+            "id": 19031463,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "OGlegends",
+                  "id": 1546599
+                }
+              }
+            ]
+          },
+          {
+            "id": 19031261,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "enhades",
+                  "id": 4538011
+                }
+              }
+            ]
+          },
+          {
+            "id": 18996889,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SoulMa5ter",
+                  "id": 4363034
+                }
+              }
+            ]
+          },
+          {
+            "id": 18963051,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ColdishRamen",
+                  "id": 4443591
+                }
+              }
+            ]
+          },
+          {
+            "id": 18962358,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "12byo",
+                  "id": 158638
+                }
+              }
+            ]
+          },
+          {
+            "id": 18944930,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Legend",
+                  "id": 2454865
+                }
+              }
+            ]
+          },
+          {
+            "id": 18923559,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "thepenguinduke",
+                  "id": 3852165
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901025,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Pikachu",
+                  "id": 3548514
+                }
+              }
+            ]
+          },
+          {
+            "id": 18899621,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "guyguygvy",
+                  "id": 3966065
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "E1": {
+      "numEntrants": 25,
+      "videogame": {
+        "name": "Guilty Gear: Strive",
+        "id": 33945
+      },
+      "entrants": {
+        "nodes": [
+          {
+            "id": 19073473,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "nothing",
+                  "id": 657944
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073366,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Avi",
+                  "id": 2411820
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073214,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Tylerus",
+                  "id": 4253063
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073134,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "MiniMosasaur",
+                  "id": 3114457
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073087,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Penguinos",
+                  "id": 1198933
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072526,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Roon",
+                  "id": 2626957
+                }
+              }
+            ]
+          },
+          {
+            "id": 19061706,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SHIV123_",
+                  "id": 515066
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060057,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Hazer",
+                  "id": 3913719
+                }
+              }
+            ]
+          },
+          {
+            "id": 19056306,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "poff",
+                  "id": 3415947
+                }
+              }
+            ]
+          },
+          {
+            "id": 19041123,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "EN#",
+                  "id": 1969216
+                }
+              }
+            ]
+          },
+          {
+            "id": 19038295,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Boocin",
+                  "id": 1186171
+                }
+              }
+            ]
+          },
+          {
+            "id": 19031464,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "OGlegends",
+                  "id": 1546599
+                }
+              }
+            ]
+          },
+          {
+            "id": 18996890,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SoulMa5ter",
+                  "id": 4363034
+                }
+              }
+            ]
+          },
+          {
+            "id": 18972146,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "lilybee",
+                  "id": 3261226
+                }
+              }
+            ]
+          },
+          {
+            "id": 18962359,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "12byo",
+                  "id": 158638
+                }
+              }
+            ]
+          },
+          {
+            "id": 18930227,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "styrofoam",
+                  "id": 2503747
+                }
+              }
+            ]
+          },
+          {
+            "id": 18914009,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Pink Rain",
+                  "id": 1771077
+                }
+              }
+            ]
+          },
+          {
+            "id": 18904700,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Tonkatsu",
+                  "id": 3912513
+                }
+              }
+            ]
+          },
+          {
+            "id": 18903113,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Millie",
+                  "id": 2382104
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901861,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Napkins",
+                  "id": 2815644
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901026,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Pikachu",
+                  "id": 3548514
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901016,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FinalFlash",
+                  "id": 589066
+                }
+              }
+            ]
+          },
+          {
+            "id": 18899623,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "guyguygvy",
+                  "id": 3966065
+                }
+              }
+            ]
+          },
+          {
+            "id": 18841191,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Sliyne",
+                  "id": 2587493
+                }
+              }
+            ]
+          },
+          {
+            "id": 18798494,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Luca Vallecar",
+                  "id": 3127490
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "E2": {
+      "numEntrants": 40,
+      "videogame": {
+        "name": "TEKKEN 8",
+        "id": 49783
+      },
+      "entrants": {
+        "nodes": [
+          {
+            "id": 18787071,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Kelvaro",
+                  "id": 2724117
+                }
+              }
+            ]
+          },
+          {
+            "id": 19061305,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "24Boi",
+                  "id": 3040368
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060800,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Fisherboat",
+                  "id": 4011302
+                }
+              }
+            ]
+          },
+          {
+            "id": 18903112,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Millie",
+                  "id": 2382104
+                }
+              }
+            ]
+          },
+          {
+            "id": 18787758,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Aguelidh",
+                  "id": 3192782
+                }
+              }
+            ]
+          },
+          {
+            "id": 18787026,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Apollyon",
+                  "id": 1652284
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072810,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "yoo_see",
+                  "id": 3839410
+                }
+              }
+            ]
+          },
+          {
+            "id": 18965096,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Zestiquant",
+                  "id": 1735123
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901011,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "_RYDERBOY",
+                  "id": 2420375
+                }
+              }
+            ]
+          },
+          {
+            "id": 18895646,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "guyguygvy",
+                  "id": 3966065
+                }
+              }
+            ]
+          },
+          {
+            "id": 18787576,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ieatbutts77",
+                  "id": 3920367
+                }
+              }
+            ]
+          },
+          {
+            "id": 19061705,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SHIV123_",
+                  "id": 515066
+                }
+              }
+            ]
+          },
+          {
+            "id": 18816447,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Tomochi",
+                  "id": 3955412
+                }
+              }
+            ]
+          },
+          {
+            "id": 18904065,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Bsuperboss",
+                  "id": 3873227
+                }
+              }
+            ]
+          },
+          {
+            "id": 18996887,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SoulMa5ter",
+                  "id": 4363034
+                }
+              }
+            ]
+          },
+          {
+            "id": 19078476,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Bird",
+                  "id": 10805
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073494,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FR_EEK",
+                  "id": 4544929
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073439,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FoolishFacade",
+                  "id": 2738491
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073241,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "TPP",
+                  "id": 4544859
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072707,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "thepenguinduke",
+                  "id": 3852165
+                }
+              }
+            ]
+          },
+          {
+            "id": 19065159,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Paff1nder",
+                  "id": 4543856
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060215,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Butterkarp",
+                  "id": 4543078
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060165,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Nickgill96",
+                  "id": 4543070
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060056,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Hazer",
+                  "id": 3913719
+                }
+              }
+            ]
+          },
+          {
+            "id": 19051142,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Poison",
+                  "id": 2024926
+                }
+              }
+            ]
+          },
+          {
+            "id": 19032476,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Drelan",
+                  "id": 3463619
+                }
+              }
+            ]
+          },
+          {
+            "id": 18988021,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "NoSteam",
+                  "id": 4323371
+                }
+              }
+            ]
+          },
+          {
+            "id": 18966313,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SMOKE",
+                  "id": 4525256
+                }
+              }
+            ]
+          },
+          {
+            "id": 18963050,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ColdishRamen",
+                  "id": 4443591
+                }
+              }
+            ]
+          },
+          {
+            "id": 18961812,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SeaLarva",
+                  "id": 4524587
+                }
+              }
+            ]
+          },
+          {
+            "id": 18955572,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Leaky Sponge",
+                  "id": 2147284
+                }
+              }
+            ]
+          },
+          {
+            "id": 18913802,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "DK_Brawler",
+                  "id": 287091
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901586,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Sliyne",
+                  "id": 2587493
+                }
+              }
+            ]
+          },
+          {
+            "id": 18841117,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Mrbloo",
+                  "id": 4449632
+                }
+              }
+            ]
+          },
+          {
+            "id": 18840018,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "GudoXIII",
+                  "id": 3500286
+                }
+              }
+            ]
+          },
+          {
+            "id": 18817389,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Templer",
+                  "id": 692125
+                }
+              }
+            ]
+          },
+          {
+            "id": 18816872,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "RIIKII",
+                  "id": 3955346
+                }
+              }
+            ]
+          },
+          {
+            "id": 18816695,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Whale",
+                  "id": 4072920
+                }
+              }
+            ]
+          },
+          {
+            "id": 18816421,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Kairu",
+                  "id": 4448962
+                }
+              }
+            ]
+          },
+          {
+            "id": 18816392,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Karaban",
+                  "id": 4117109
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "E3": {
+      "numEntrants": 43,
+      "videogame": {
+        "name": "Street Fighter 6",
+        "id": 43868
+      },
+      "entrants": {
+        "nodes": [
+          {
+            "id": 19080551,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "GuyMoo",
+                  "id": 2541149
+                }
+              }
+            ]
+          },
+          {
+            "id": 19079996,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Wessdance",
+                  "id": 211753
+                }
+              }
+            ]
+          },
+          {
+            "id": 19079759,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "R4 Haggar",
+                  "id": 146646
+                }
+              }
+            ]
+          },
+          {
+            "id": 19077760,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Clim",
+                  "id": 64470
+                }
+              }
+            ]
+          },
+          {
+            "id": 19076904,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "kalma",
+                  "id": 15409
+                }
+              }
+            ]
+          },
+          {
+            "id": 19075610,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "josepht.",
+                  "id": 4545274
+                }
+              }
+            ]
+          },
+          {
+            "id": 19073495,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FR_EEK",
+                  "id": 4544929
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072756,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FrozenHusky",
+                  "id": 228777
+                }
+              }
+            ]
+          },
+          {
+            "id": 19072747,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Skizzie",
+                  "id": 4544800
+                }
+              }
+            ]
+          },
+          {
+            "id": 19070894,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Iffity",
+                  "id": 2575801
+                }
+              }
+            ]
+          },
+          {
+            "id": 19067621,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "WobrJ",
+                  "id": 3974159
+                }
+              }
+            ]
+          },
+          {
+            "id": 19064221,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "CF",
+                  "id": 4208712
+                }
+              }
+            ]
+          },
+          {
+            "id": 19060149,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "TYTIN",
+                  "id": 3847697
+                }
+              }
+            ]
+          },
+          {
+            "id": 19056305,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "poff",
+                  "id": 3415947
+                }
+              }
+            ]
+          },
+          {
+            "id": 19039412,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ZacAttack",
+                  "id": 2371642
+                }
+              }
+            ]
+          },
+          {
+            "id": 19032549,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Milly Tea",
+                  "id": 3852161
+                }
+              }
+            ]
+          },
+          {
+            "id": 19032477,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Drelan",
+                  "id": 3463619
+                }
+              }
+            ]
+          },
+          {
+            "id": 19031462,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "OGlegends",
+                  "id": 1546599
+                }
+              }
+            ]
+          },
+          {
+            "id": 19016222,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Devilman",
+                  "id": 249751
+                }
+              }
+            ]
+          },
+          {
+            "id": 18999134,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Mr Doge",
+                  "id": 4531093
+                }
+              }
+            ]
+          },
+          {
+            "id": 18996888,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "SoulMa5ter",
+                  "id": 4363034
+                }
+              }
+            ]
+          },
+          {
+            "id": 18976719,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "7erabytes",
+                  "id": 3524267
+                }
+              }
+            ]
+          },
+          {
+            "id": 18972438,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "CeroBlast",
+                  "id": 2899160
+                }
+              }
+            ]
+          },
+          {
+            "id": 18955573,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Leaky Sponge",
+                  "id": 2147284
+                }
+              }
+            ]
+          },
+          {
+            "id": 18944929,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Legend",
+                  "id": 2454865
+                }
+              }
+            ]
+          },
+          {
+            "id": 18943966,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Ludilue",
+                  "id": 1465714
+                }
+              }
+            ]
+          },
+          {
+            "id": 18934270,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Shmaw",
+                  "id": 1993372
+                }
+              }
+            ]
+          },
+          {
+            "id": 18930226,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "styrofoam",
+                  "id": 2503747
+                }
+              }
+            ]
+          },
+          {
+            "id": 18923558,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "thepenguinduke",
+                  "id": 3852165
+                }
+              }
+            ]
+          },
+          {
+            "id": 18912931,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ROWERmyMOWER",
+                  "id": 4190388
+                }
+              }
+            ]
+          },
+          {
+            "id": 18903202,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "ucky",
+                  "id": 3491288
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901587,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Sliyne",
+                  "id": 2587493
+                }
+              }
+            ]
+          },
+          {
+            "id": 18901015,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "FinalFlash",
+                  "id": 589066
+                }
+              }
+            ]
+          },
+          {
+            "id": 18899622,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "guyguygvy",
+                  "id": 3966065
+                }
+              }
+            ]
+          },
+          {
+            "id": 18898710,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "VintageBrawler",
+                  "id": 4514576
+                }
+              }
+            ]
+          },
+          {
+            "id": 18879179,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Ogrenap",
+                  "id": 1748785
+                }
+              }
+            ]
+          },
+          {
+            "id": 18842356,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "DK_Brawler",
+                  "id": 287091
+                }
+              }
+            ]
+          },
+          {
+            "id": 18842271,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "BionicFraud",
+                  "id": 288492
+                }
+              }
+            ]
+          },
+          {
+            "id": 18841118,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Mrbloo",
+                  "id": 4449632
+                }
+              }
+            ]
+          },
+          {
+            "id": 18834030,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Gggguest",
+                  "id": 3820621
+                }
+              }
+            ]
+          },
+          {
+            "id": 18831337,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Lancelot",
+                  "id": 3117348
+                }
+              }
+            ]
+          },
+          {
+            "id": 18831197,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "AlbinoLobster",
+                  "id": 3898886
+                }
+              }
+            ]
+          },
+          {
+            "id": 18787286,
+            "participants": [
+              {
+                "player": {
+                  "gamerTag": "Chris",
+                  "id": 4393367
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {
+    "cacheControl": {
+      "version": 1,
+      "hints": [
+        {
+          "path": [
+            "E0"
+          ],
+          "maxAge": 60,
+          "scope": "PRIVATE"
+        },
+        {
+          "path": [
+            "E1"
+          ],
+          "maxAge": 60,
+          "scope": "PRIVATE"
+        },
+        {
+          "path": [
+            "E2"
+          ],
+          "maxAge": 60,
+          "scope": "PRIVATE"
+        },
+        {
+          "path": [
+            "E3"
+          ],
+          "maxAge": 60,
+          "scope": "PRIVATE"
+        }
+      ]
+    },
+    "queryComplexity": 262
+  },
+  "actionRecords": []
+}

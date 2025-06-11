@@ -92,6 +92,56 @@ query getEventId($slug: String) {
 }
 """
 
+# Retrieve tournament id and events by ids
+resultsQuery = """
+query TourneyQuery($slug: String) {
+		tournament(slug: $slug){
+			id
+			name
+			events {
+        id
+			}
+		}
+	}
+"""
+
+entrants_w_sets_query = """
+query EntrantsWithSets($entrantId: ID!, $page: Int!, $perPage: Int!) {
+  paginatedSets (page: 0, perPage: 5) {
+    nodes {
+      winnerId
+      slots {
+        entrant {
+          id
+        }
+      }
+    }
+  }
+"""
+
+## Retrieve entrants from all brackets (events) in a tournament
+events_query = """
+query EventsQuery($id: ID!, $page: Int!, $perPage: Int!) {
+  event(id: $id) {
+    numEntrants 
+    videogame {
+      name
+      id
+    }
+    entrants (query: {page: $page, perPage: $perPage}) {
+      nodes {
+        id
+        participants {
+          player {
+            gamerTag
+            id
+          }
+        }
+      }
+    }
+  }
+"""
+
 players_query = """
 query EventEntrants($eventId: ID!, $page: Int!, $perPage: Int!) {
   event(id: $eventId) {
