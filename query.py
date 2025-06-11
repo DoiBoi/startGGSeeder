@@ -107,16 +107,19 @@ query TourneyQuery($slug: String) {
 
 entrants_w_sets_query = """
 query EntrantsWithSets($entrantId: ID!, $page: Int!, $perPage: Int!) {
-  paginatedSets (page: 0, perPage: 5) {
-    nodes {
-      winnerId
-      slots {
-        entrant {
-          id
+  entrant(id: $entrantId) {  
+  	paginatedSets (page: $page, perPage: $perPage) {
+      nodes {
+        winnerId
+        slots {
+          entrant {
+            id
+          }
         }
       }
     }
   }
+}
 """
 
 ## Retrieve entrants from all brackets (events) in a tournament

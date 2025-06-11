@@ -29,9 +29,6 @@ seen_set_ids = set()
 
 # print(result)
 
-
-# test run with ss5 on streets
-# run it per event basis
 def process_tournament(eventSlug):
     """
     Process an event by its slug, retrieving entrants and matches,
@@ -56,16 +53,16 @@ def process_tournament(eventSlug):
                 id
             }
             entrants (query: {page: $page, perPage: $perPage}) {
-            nodes {
-                id
-                participants {
-                    player {
-                        gamerTag
-                        id
+                nodes {
+                    id
+                    participants {
+                        player {
+                            gamerTag
+                            id
+                        }
                     }
                 }
-            }
-        } 
+            } 
         }\n"""
     query += """}"""
 
@@ -82,6 +79,7 @@ def process_tournament(eventSlug):
             
 
 def process_event(event): 
+    entrant_ids = []
     for entrant in event['entrants']['nodes']:
         player_id = entrant['participants'][0]['player']['id']
         player_name = entrant['participants'][0]['player']['gamerTag']
@@ -90,10 +88,47 @@ def process_event(event):
             players[player_id] = Player()
             player_name_map[player_id] = player_name
         entrant_to_player[entrant_id] = player_id
+        entrant_ids.append(entrant_id)
+
+    # get sets for each entrants
+    query = """query EntrantsWithSets("""
+    for i in range(len(entrant_ids)):
+        query += f"$entrantId{i}: ID!, "
+    query += "$page: Int!, $perPage: Int!) {\n"
+    for i in range(len(entrant_ids)):
+        entrant_id = entrant_ids[i]
+        query += f"""E{i}: entrant(id: $entrantId{i})""" + """{  
+            paginatedSets (page: $page, perPage: $perPage) {
+                nodes {
+                    winnerId
+                    slots {
+                        entrant {
+                            id
+                        }
+                    }
+                }
+            }
+        }\n"""
+    query += """}"""
+
+    sets = q.run_query(query, {
+        **{f"entrantId{i}": entrant_ids[i] for i in range(len(entrant_ids))},
+        "page": 0,
+        "perPage": 10
+    })
+    f = open('items.json', 'w')
+    f.write(json.dumps(sets, indent=2))
+    f.close()
+        
+
+
+        
+
         
 
 
 
+
 process_tournament("end-of-heights-3")
-print(players)
+print(player_name_map)
 
