@@ -143,6 +143,7 @@ query EventsQuery($id: ID!, $page: Int!, $perPage: Int!) {
       }
     }
   }
+}
 """
 
 players_query = """
