@@ -7,14 +7,14 @@ from datetime import datetime
 import re
 from glicko2 import Player
 
-## Player by ID
-players = {}
+# ## Player by ID
+# players = {}
 
-## Player by name
+# ## Player by name
 player_name_map = {}
 
-## Entrant to Player mapping
-entrant_to_player = {}
+# ## Entrant to Player mapping
+# entrant_to_player = {}
 
 
 
@@ -64,23 +64,24 @@ def process_tournament(eventSlug):
     # shoves the players into the set and the map
     if not eventsEntrants['data']: return 
     for i in range(len(eventsEntrants['data'])):
-        process_event(eventsEntrants['data'][f"E{i}"])
-            
+        process_event(eventsEntrants['data'][f"E{i}"], eventsEntrants['data'][f"E{i}"]['numEntrants'])            
 
-def process_event(event):
+def process_event(event, players = {}):
     """
     Process an event, retrieving entrants and matches,
     and updating player ratings using the Glicko-2 algorithm.
     Args:
-        event (dict): The event data containing entrants and matches.
-        
+        event (dict or int): The event data (as a dict) or event ID (as an int).
+        players (dict): Optional; a dictionary of Player objects keyed by player ID.
+        player_name_map (dict): Optional; a dictionary mapping player IDs to names.
+        entrant_to_player (dict): Optional; a dictionary mapping entrant IDs to player IDs.
     """
-    
     if type(event) is int:
         event = q.run_query(q.events_query, {"id": event, "page": 0, "perPage": 512})['data']['event']
 
     entrant_ids = []
     matches = []
+    entrant_to_player = {}
 
     for entrant in event['entrants']['nodes']:
         player_id = entrant['participants'][0]['player']['id']
@@ -141,6 +142,7 @@ def process_event(event):
             elif winner_id == e2:
                 matches.append((p2,p1)) 
     
+    # look through matches and append results
     results = {pid: [] for pid in players}
     for winner, loser in matches:
         w = players[winner]
@@ -148,6 +150,7 @@ def process_event(event):
         results[winner].append((l.rating, l.rd, 1))
         results[loser].append((w.rating, w.rd, 0))
     
+    # update players with results
     for player_id, games in results.items():
         if games:
             r_list = [r for r, rd, score in games]
@@ -155,18 +158,45 @@ def process_event(event):
             outcome = [outcome for r, rd, outcome in games]
             players[player_id].update_player(r_list, rd_list, outcome)
 
-    ranked = sorted(players.items(), key=lambda x: x[1].rating, reverse=True)
-
-    print("\n🏆 Glicko-2 Rankings:")
-    for pid, glicko_player in ranked:
-        name = player_name_map.get(pid, "Unknown")
-        print(f"{name}: Rating={glicko_player.rating:.2f}, RD={glicko_player.rd:.2f}, Vol={glicko_player.vol:.5f}")
+    return players 
     
-    
-    # f = open("items.json", "w")
-    # f.write(json.dumps(sets, indent=2))
-    # f.close
+def serialize_players(players, player_name_map):
+    """ Serialize player data to a JSON string.
+    Args:
+        players (dict): A dictionary of Player objects keyed by player ID.
+        player_name_map (dict): A dictionary mapping player IDs to names.
+    returns:
+        dict: A dictionary containing serialized player data.
+    """
+    return {
+        player_id: { 
+            "name": player_name_map.get(player_id, "Unknown"),
+            "rating": player.rating,
+            "rd": player.rd,
+            "vol": player.vol,
+        }
+        for player_id, player in players.items()
+    }
 
+def deserialize_players(json_path):
+    """
+    Deserialize player data from a JSON file.
+    Args:
+        json_path (str): The path to the JSON file containing player data.
+    Returns:
+        dict: A dictionary of Player objects keyed by player ID.
+    """
+    with open(json_path, "r") as f:
+        data = json.load(f)
+    players = {}
+    for pid, values in data.items():
+        p = Player()
+        p.rating = values["rating"]
+        p.rd = values["rd"]
+        p.vol = values["vol"]
+        players[pid] = p
+    return players
 
-process_event(1284870)
+with open("glicko_ratings.json", "w") as f:
+    json.dump(serialize_players(process_event(1284870), player_name_map), f, indent=2)
 
