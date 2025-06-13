@@ -100,6 +100,10 @@ query TourneyQuery($slug: String) {
 			name
 			events {
         id
+        videogame {
+            name
+            id
+        }
 			}
 		}
 	}
