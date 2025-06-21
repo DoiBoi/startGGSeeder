@@ -1,5 +1,5 @@
 auth.txt
 data.json
 data
-
+.env
 __pycache__/query.cpython-313.pyc

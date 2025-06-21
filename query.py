@@ -1,6 +1,10 @@
 import requests
 import time
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 tournament_query = """
 query TournamentEvents($tourneySlug:String!) {
@@ -254,10 +258,11 @@ def create_entrant_query(num_events):
     return query
 
 def run_query(query, variables=None, retries=0):
-    url = 'https://api.start.gg/gql/alpha'
+    url = os.getenv('SGG_API_URL')
+    key = os.getenv('SGG_API_KEY')
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer c6df148d662dee8949027063fabc4a46'  # Replace with your own token
+        'Authorization': 'Bearer ' + key # Replace with your own token
     }
     max_retries = 5  # Adjust as needed
     base_sleep = 30  # Base sleep time for exponential backoff (in seconds)
