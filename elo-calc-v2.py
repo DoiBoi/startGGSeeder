@@ -138,7 +138,14 @@ def process_event(event, videogame_id = None):
         entrant_id = entrant['id']
         if player_id not in players:
             players[player_id] = Player()
+            players[player_id].appearances = 1
             player_name_map[player_id] = player_name
+        else:
+            # Increment appearances if already exists
+            if hasattr(players[player_id], "appearances"):
+                players[player_id].appearances += 1
+            else:
+                players[player_id].appearances = 1
         entrant_to_player[entrant_id] = player_id
         entrant_ids.append(entrant_id)
 
@@ -259,13 +266,9 @@ def process_player_batch(entrant_ids, players, entrant_to_player, seen_sets=set(
 def update_all_rankings_csv(players, player_name_map, videogame_id):
     """
     Update or append player rankings in data/all_rankings.csv.
-    Args:
-        players (dict): Player objects keyed by player ID.
-        player_name_map (dict): Mapping of player IDs to names.
-        videogame_id (int): The game ID.
     """
     all_rankings_path = "data/all_rankings.csv"
-    fieldnames = ["player_id", "name", "rating", "rd", "vol", "game_id", "ranking"]
+    fieldnames = ["player_id", "name", "rating", "rd", "vol", "game_id", "ranking", "appearances"]
     existing_rows = []
 
     # Read existing data if file exists
@@ -275,19 +278,17 @@ def update_all_rankings_csv(players, player_name_map, videogame_id):
             for row in reader:
                 existing_rows.append(row)
 
-    # Build a lookup for (player_id, game_id)
     existing_lookup = {(int(row["player_id"]), str(row["game_id"])): i for i, row in enumerate(existing_rows)}
 
-    # Sort players by rating (highest first) and assign ranking numbers
     sorted_players = sorted(players.items(), key=lambda x: x[1].rating, reverse=True)
     player_rankings = {}
     for rank, (pid, player) in enumerate(sorted_players, start=1):
         player_rankings[pid] = rank
 
-    # Update or append player rows
     for pid, player in players.items():
         key = (pid, str(videogame_id))
         ranking = player_rankings[pid]
+        appearances = getattr(player, "appearances", 1)
         new_row = {
             "player_id": pid,
             "name": player_name_map.get(pid, "Unknown"),
@@ -295,14 +296,14 @@ def update_all_rankings_csv(players, player_name_map, videogame_id):
             "rd": player.rd,
             "vol": player.vol,
             "game_id": videogame_id,
-            "ranking": ranking
+            "ranking": ranking,
+            "appearances": appearances
         }
         if key in existing_lookup:
             existing_rows[existing_lookup[key]] = {k: str(v) for k, v in new_row.items()}
         else:
             existing_rows.append({k: str(v) for k, v in new_row.items()})
 
-    # Write back to CSV
     with open(all_rankings_path, "w", newline='', encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -317,77 +318,72 @@ def serialize_players(players, player_name_map, videogame_id):
     """
     sorted_players = sorted(players.items(), key=lambda x: x[1].rating, reverse=True)
     with open(f"data/{videogame_id}.csv", "w", newline='', encoding="utf-8") as csvfile:
-        fieldnames = ["player_id", "name", "rating", "rd", "vol"]
+        fieldnames = ["player_id", "name", "rating", "rd", "vol", "appearances"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        # Write header only if file is empty
         if csvfile.tell() == 0:
             writer.writeheader()
-
-        sorted_players = sorted(players.items(), key=lambda x: x[1].rating, reverse=True)
         for pid, player in sorted_players:
+            appearances = getattr(player, "appearances", 1)
             writer.writerow({
                 "player_id": pid,
                 "name": player_name_map.get(pid, "Unknown"),
                 "rating": player.rating,
                 "rd": player.rd,
-                "vol": player.vol
+                "vol": player.vol,
+                "appearances": appearances
             })
-    # Call the new function to update all_rankings.csv
     update_all_rankings_csv(players, player_name_map, videogame_id)
-    
-    
 
 def deserialize_players(videogame_id):
     """
-    Deserialize player data from a JSON file.
-    Args:
-        json_path (str): The path to the JSON file containing player data.
-    Returns:
-        dict: A dictionary of Player objects keyed by player ID.
+    Deserialize player data from a CSV file.
     """
     players = {}
     with open(f"data/{videogame_id}.csv", "r", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             player_id = int(row['player_id'])
-            players[player_id] = Player(
+            player = Player(
                 rating=float(row['rating']),
                 rd=float(row['rd']),
                 vol=float(row['vol'])
             )
+            # Add appearances if present, else default to 1
+            player.appearances = int(row.get('appearances', 1))
+            players[player_id] = player
     return players
 
 ## Scraping data (Run this once to get the data)
-# process_tournament("ubc-summer-slam")
-# process_tournament("okizeme-46")
-# process_tournament("ubc-summer-slam-2")
-# process_tournament("ubc-summer-slam-3")
-# process_tournament("sunset-series-2024", saved_games=True)
-# process_tournament("ubc-sunset-showdown")
-# process_tournament("okizeme-47")
-# process_tournament("ubc-fgc-frenzy-friday-1")
-# process_tournament("ubc-fgc-frenzy-friday-2")
-# process_tournament("burnaby-boo-rawl", saved_games=True)
-# process_tournament("ubc-fgc-frenzy-friday-3")
-# process_tournament("pataka-esports-festival", saved_games=True)
-# process_tournament("ubc-fgc-autumn-assault-1")
-# process_tournament("ubc-fgc-frenzy-friday-4")
-# process_tournament("ubc-fgc-frenzy-friday-5")
-# process_tournament("goin-up", saved_games=True)
-# process_tournament("ubc-fgc-frenzy-friday-6")
-# process_tournament("okizeme-48")
-# process_tournament("ubc-fgc-winter-wavedash-1")
-# process_tournament("okizeme-49")
-# process_tournament("ubc-fgc-frenzy-friday-7")
-# process_tournament("ubc-fgc-frenzy-friday-8")
-# process_tournament("ubc-fgc-frenzy-friday-9")
-# process_tournament("end-of-heights-3")
-# process_tournament("ubc-fgc-frenzy-friday-10")
-# process_tournament("ubc-fgc-frenzy-friday-11")
-# process_tournament("ubc-fgc-winter-wavedash-2")
-# process_tournament("okizeme-50")
-# process_tournament("ubc-fgc-frenzy-friday-12")
-# process_tournament("cascadia-cup-road-to-bobc")
-# process_tournament("battle-of-bc-7-6", saved_games=True)
-# process_tournament("ubc-fgc-summer-slam-5")
-# process_tournament("ubc-fgc-summer-slam-6")
+process_tournament("ubc-summer-slam")
+process_tournament("okizeme-46")
+process_tournament("ubc-summer-slam-2")
+process_tournament("ubc-summer-slam-3")
+process_tournament("sunset-series-2024", saved_games=True)
+process_tournament("ubc-sunset-showdown")
+process_tournament("okizeme-47")
+process_tournament("ubc-fgc-frenzy-friday-1")
+process_tournament("ubc-fgc-frenzy-friday-2")
+process_tournament("burnaby-boo-rawl", saved_games=True)
+process_tournament("ubc-fgc-frenzy-friday-3")
+process_tournament("pataka-esports-festival", saved_games=True)
+process_tournament("ubc-fgc-autumn-assault-1")
+process_tournament("ubc-fgc-frenzy-friday-4")
+process_tournament("ubc-fgc-frenzy-friday-5")
+process_tournament("goin-up", saved_games=True)
+process_tournament("ubc-fgc-frenzy-friday-6")
+process_tournament("okizeme-48")
+process_tournament("ubc-fgc-winter-wavedash-1")
+process_tournament("okizeme-49")
+process_tournament("ubc-fgc-frenzy-friday-7")
+process_tournament("ubc-fgc-frenzy-friday-8")
+process_tournament("ubc-fgc-frenzy-friday-9")
+process_tournament("end-of-heights-3")
+process_tournament("ubc-fgc-frenzy-friday-10")
+process_tournament("ubc-fgc-frenzy-friday-11")
+process_tournament("ubc-fgc-winter-wavedash-2")
+process_tournament("okizeme-50")
+process_tournament("ubc-fgc-frenzy-friday-12")
+process_tournament("cascadia-cup-road-to-bobc")
+process_tournament("battle-of-bc-7-6", saved_games=True)
+process_tournament("ubc-fgc-summer-slam-5")
+process_tournament("ubc-fgc-summer-slam-6")

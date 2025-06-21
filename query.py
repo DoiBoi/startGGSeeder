@@ -257,7 +257,7 @@ def run_query(query, variables=None, retries=0):
     url = 'https://api.start.gg/gql/alpha'
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer [STARTGG API TOKEN]'  # Replace with your own token
+        'Authorization': 'Bearer c6df148d662dee8949027063fabc4a46'  # Replace with your own token
     }
     max_retries = 5  # Adjust as needed
     base_sleep = 30  # Base sleep time for exponential backoff (in seconds)
