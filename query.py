@@ -311,6 +311,68 @@ def fetch_tournaments_paginated(
             yield node
         page += 1
 
+
+def fetch_videogames_from_tournaments(
+    tournament_slugs: list[str],
+    batch_size: int = 10,
+) -> dict[int, str]:
+    """Return a de-duplicated mapping of videogame_id -> videogame_name.
+
+    This is useful for populating/updating the Supabase `videogame_mapping` table.
+    Batches slugs into a single GraphQL request to reduce API calls.
+    """
+    if not tournament_slugs:
+        return {}
+
+    result: dict[int, str] = {}
+
+    for start in range(0, len(tournament_slugs), batch_size):
+        batch = tournament_slugs[start : start + batch_size]
+
+        query = "query TournamentVideogames("
+        for i in range(len(batch)):
+            query += f"$slug{i}: String!, "
+        query += ") {\n"
+
+        for i in range(len(batch)):
+            query += (
+                f"T{i}: tournament(slug: $slug{i})" + "{\n"
+                "  events {\n"
+                "    videogame { id name displayName }\n"
+                "  }\n"
+                "}\n"
+            )
+
+        query += "}"
+
+        resp = run_query(query, {f"slug{i}": batch[i] for i in range(len(batch))})
+        if "errors" in resp:
+            raise Exception(f"Tournament videogame query failed: {resp['errors']}")
+
+        data = resp.get("data") or {}
+        for i in range(len(batch)):
+            t = data.get(f"T{i}")
+            if not t:
+                continue
+            for ev in t.get("events") or []:
+                vg = (ev or {}).get("videogame")
+                if not vg:
+                    continue
+                vg_id = vg.get("id")
+                if vg_id is None:
+                    continue
+                try:
+                    vg_id_int = int(vg_id)
+                except Exception:
+                    continue
+
+                vg_name = vg.get("displayName") or vg.get("name") or "Unknown"
+                # Keep the first seen non-empty name
+                if vg_id_int not in result or result[vg_id_int] == "Unknown":
+                    result[vg_id_int] = str(vg_name)
+
+    return result
+
 def create_entrant_query(num_events):
     query = "query EventEntrants("
     for i in range(num_events):
