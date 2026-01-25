@@ -22,7 +22,10 @@ class SupabaseService:
         return self._client.table(table).select("*").execute().data  # type: ignore
 
     def upsert(self, table: str, rows: Iterable[Dict[str, Any]]) -> None:
-        self._client.table(table).upsert(list(rows)).execute()
+        rows_list = list(rows)
+        if not rows_list:
+            return
+        self._client.table(table).upsert(rows_list).execute()
 
     def select_eq(self, table: str, column: str, value: Any) -> List[Dict[str, Any]]:
         return self._client.table(table).select("*").eq(column, value).execute().data  # type: ignore
