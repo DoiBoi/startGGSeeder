@@ -237,7 +237,7 @@ query TournamentsQuery($country: String, $state: String, $id: [ID]) {
       hasOnlineEvents: false
       videogameIds: $id
     }
-    sort: endAt
+    sort: startAt
   }) {
     pageInfo {
       total
