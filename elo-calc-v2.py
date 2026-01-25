@@ -162,6 +162,7 @@ def process_tournaments_from_mapping(
     else:
         print("No tournaments found to process.")
 
+upsert_videogame_mapping_from_tournament_slugs(tournament_slugs=tournament_slugs)
 upsert_videogame_mapping_from_tournament_slugs(tournament_slugs=["rde-83-tekken-7"])
 
 # Example usage retained below (commented)
