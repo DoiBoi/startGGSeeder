@@ -228,6 +228,89 @@ query VideogameQuery ($name: String!) {
   }
 }"""
 
+tournaments_search_query = """
+query TournamentsQuery($country: String, $state: String, $id: [ID]) {
+  tournaments(query: {
+    filter: {
+      countryCode: $country
+      addrState: $state
+      hasOnlineEvents: false
+      videogameIds: $id
+    }
+    sort: endAt
+  }) {
+    pageInfo {
+      total
+      totalPages
+      page
+      perPage
+    }
+    nodes {
+      name
+    }
+  }
+"""
+
+# Paginated tournament search (supports after/before timestamps)
+tournaments_search_query_v2 = """
+query TournamentsQuery($country: String, $state: String, $id: [ID], $afterDate: Timestamp, $beforeDate: Timestamp, $perPage: Int, $page: Int) {
+  tournaments(
+    query: {filter: {countryCode: $country, addrState: $state, videogameIds: $id, afterDate: $afterDate, beforeDate: $beforeDate}, sort: endAt, perPage: $perPage, page: $page}
+  ) {
+    pageInfo {
+      total
+      totalPages
+      page
+      perPage
+    }
+    nodes {
+      name
+      slug
+      endAt
+    }
+  }
+}
+"""
+
+
+def fetch_tournaments_paginated(
+    country: str | None,
+    state: str | None,
+    videogame_ids: list[str] | None,
+    after_date: int | None = None,
+    before_date: int | None = None,
+    per_page: int = 50,
+):
+    """Yield tournament nodes from start.gg using page-based pagination.
+
+    `after_date`/`before_date` are Unix timestamps (e.g. 1769320800).
+    `videogame_ids` should be strings for GraphQL `ID`.
+    """
+    page = 1
+    total_pages = 1
+    while page <= total_pages:
+        variables = {
+            "country": country,
+            "state": state,
+            "id": videogame_ids,
+            "afterDate": after_date,
+            "beforeDate": before_date,
+            "perPage": per_page,
+            "page": page,
+        }
+        resp = run_query(tournaments_search_query_v2, variables)
+        if "errors" in resp:
+            raise Exception(f"Tournament search failed: {resp['errors']}")
+        data = resp.get("data", {}).get("tournaments")
+        if not data:
+            return
+        page_info = data.get("pageInfo") or {}
+        total_pages = int(page_info.get("totalPages") or 1)
+        nodes = data.get("nodes") or []
+        for node in nodes:
+            yield node
+        page += 1
+
 def create_entrant_query(num_events):
     query = "query EventEntrants("
     for i in range(num_events):
@@ -262,7 +345,7 @@ def run_query(query, variables=None, retries=0):
     key = os.getenv('SGG_API_KEY')
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + key # Replace with your own token
+        'Authorization': 'Bearer ' + str(key) # Replace with your own token
     }
     max_retries = 5  # Adjust as needed
     base_sleep = 30  # Base sleep time for exponential backoff (in seconds)
@@ -270,7 +353,7 @@ def run_query(query, variables=None, retries=0):
     while True:
         try:
             response = requests.post(
-                url,
+                str(url),
                 json={'query': query, 'variables': variables},
                 headers=headers,
                 timeout=30  # Adjust timeout if necessary

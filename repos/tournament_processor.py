@@ -107,7 +107,7 @@ class TournamentProcessor:
         self.history_repo = history_repo
         self.event_processor = EventProcessor(supabase, players_repo, rating_service, history_repo)
 
-    def process_tournament(self, event_slug: str, saved_games: bool = False):
+    def process_tournament(self, event_slug: str, saved_games: bool = False, update_discriminator: bool = True):
         print(f"Processing tournament {event_slug}...")
         events = q.run_query(q.resultsQuery, {"slug": event_slug})['data']['tournament']['events']
         existing_map_rows = self.supabase.fetch_all("videogame_mapping")
@@ -161,4 +161,5 @@ class TournamentProcessor:
 
         # Upsert videogame mapping
         self.supabase.upsert("videogame_mapping", [{"id": vid, "name": name} for vid, name in videogame_map.items()])
-        update_with_discriminator()
+        if update_discriminator:
+            update_with_discriminator()
