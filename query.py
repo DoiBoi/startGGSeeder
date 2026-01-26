@@ -253,9 +253,9 @@ query TournamentsQuery($country: String, $state: String, $id: [ID]) {
 
 # Paginated tournament search (supports after/before timestamps)
 tournaments_search_query_v2 = """
-query TournamentsQuery($country: String, $state: String, $id: [ID], $afterDate: Timestamp, $beforeDate: Timestamp, $perPage: Int, $page: Int) {
+query TournamentsQuery($country: String, $state: String, $id: [ID], $afterDate: Timestamp, $beforeDate: Timestamp, $perPage: Int, $page: Int, $sort: TournamentPaginationSort) {
   tournaments(
-    query: {filter: {countryCode: $country, addrState: $state, videogameIds: $id, afterDate: $afterDate, beforeDate: $beforeDate}, sort: endAt, perPage: $perPage, page: $page}
+    query: {filter: {countryCode: $country, addrState: $state, videogameIds: $id, afterDate: $afterDate, beforeDate: $beforeDate}, sort: $sort, perPage: $perPage, page: $page}
   ) {
     pageInfo {
       total
@@ -266,6 +266,7 @@ query TournamentsQuery($country: String, $state: String, $id: [ID], $afterDate: 
     nodes {
       name
       slug
+      startAt
       endAt
     }
   }
@@ -280,6 +281,7 @@ def fetch_tournaments_paginated(
     after_date: int | None = None,
     before_date: int | None = None,
     per_page: int = 50,
+  sort: str = "endAt",
 ):
     """Yield tournament nodes from start.gg using page-based pagination.
 
@@ -297,6 +299,7 @@ def fetch_tournaments_paginated(
             "beforeDate": before_date,
             "perPage": per_page,
             "page": page,
+        "sort": sort,
         }
         resp = run_query(tournaments_search_query_v2, variables)
         if "errors" in resp:
@@ -310,6 +313,49 @@ def fetch_tournaments_paginated(
         for node in nodes:
             yield node
         page += 1
+
+
+def fetch_tournaments_all(
+    country: str | None,
+    state: str | None,
+    videogame_ids: list[str] | None,
+    after_date: int | None = None,
+    before_date: int | None = None,
+    per_page: int = 50,
+    sort: str = "endAt",
+    client_sort_ascending: bool = False,
+    client_sort_field: str | None = None,
+) -> list[dict]:
+    """Fetch all pages into a list.
+
+    If `client_sort_ascending=True`, sorts the combined results ascending by
+    `client_sort_field` (defaults to `sort`). Null/missing values are treated
+    as +infinity so they appear last.
+    """
+    nodes = list(
+        fetch_tournaments_paginated(
+            country=country,
+            state=state,
+            videogame_ids=videogame_ids,
+            after_date=after_date,
+            before_date=before_date,
+            per_page=per_page,
+            sort=sort,
+        )
+    )
+
+    if client_sort_ascending:
+        field = client_sort_field or sort
+
+        def sort_key(n: dict) -> float:
+            v = n.get(field)
+            if isinstance(v, (int, float)):
+                return float(v)
+            return float("inf")
+
+        nodes.sort(key=sort_key)
+
+    return nodes
 
 
 def fetch_videogames_from_tournaments(

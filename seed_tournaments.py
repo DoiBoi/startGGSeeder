@@ -54,6 +54,18 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="List matching tournaments and compute max endAt without processing.",
     )
+
+    p.add_argument(
+        "--sort",
+        default="endAt",
+        choices=["startAt", "endAt", "eventRegistrationClosesAt", "computedUpdatedAt"],
+        help="Server-side sort field used by start.gg (direction is API-defined).",
+    )
+    p.add_argument(
+        "--sort-ascending",
+        action="store_true",
+        help="Client-side ascending sort by the chosen --sort field (fetches all pages first).",
+    )
     return p
 
 
@@ -77,14 +89,29 @@ def main() -> int:
     max_end_at = after_date
     processed = 0
 
-    for node in q.fetch_tournaments_paginated(
-        country=args.country,
-        state=args.state,
-        videogame_ids=videogame_ids,
-        after_date=after_date,
-        before_date=args.before_date,
-        per_page=args.per_page,
-    ):
+    if args.sort_ascending:
+        nodes_iter = q.fetch_tournaments_all(
+            country=args.country,
+            state=args.state,
+            videogame_ids=videogame_ids,
+            after_date=after_date,
+            before_date=args.before_date,
+            per_page=args.per_page,
+            sort=args.sort,
+            client_sort_ascending=True,
+        )
+    else:
+        nodes_iter = q.fetch_tournaments_paginated(
+            country=args.country,
+            state=args.state,
+            videogame_ids=videogame_ids,
+            after_date=after_date,
+            before_date=args.before_date,
+            per_page=args.per_page,
+            sort=args.sort,
+        )
+
+    for node in nodes_iter:
         slug = node.get("slug")
         end_at = node.get("endAt")
 
