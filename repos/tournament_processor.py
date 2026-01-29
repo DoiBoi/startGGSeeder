@@ -46,8 +46,8 @@ class EventProcessor:
             matches = self._fetch_matches_for_batch(batch, entrant_to_player, seen_sets)
             # Record raw match outcomes before rating update
             if self.history_repo:
-                for winner, loser in matches:
-                    self.history_repo.record(event_slug=event_slug, winner_id=str(winner), loser_id=str(loser), played_time=event_time)
+                pairs = [(str(winner), str(loser)) for winner, loser in matches]
+                self.history_repo.record_many(event_slug=event_slug, pairs=pairs, played_time=event_time)
             self.rating_service.apply_matches(players, matches)
 
         self.players_repo.save_players(videogame_id, players, name_map)
@@ -87,8 +87,18 @@ class EventProcessor:
                     continue
                 seen_sets.add(set_id)
                 winner_id = game_set['winnerId']
-                e1 = game_set['slots'][0]['entrant']['id']
-                e2 = game_set['slots'][1]['entrant']['id']
+
+                slots = game_set.get('slots') or []
+                if len(slots) < 2:
+                    continue
+                entrant1 = (slots[0] or {}).get('entrant')
+                entrant2 = (slots[1] or {}).get('entrant')
+                if not entrant1 or not entrant2:
+                    continue
+                e1 = entrant1.get('id')
+                e2 = entrant2.get('id')
+                if e1 is None or e2 is None:
+                    continue
                 if e1 not in entrant_to_player or e2 not in entrant_to_player:
                     continue
                 p1 = entrant_to_player[e1]
