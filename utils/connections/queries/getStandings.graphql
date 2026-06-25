@@ -1,0 +1,18 @@
+query findStandings($slug: String) {
+  tournament(slug: $slug) {
+    events {
+      standings(query: {page: 1, perPage: 50}) {
+        nodes {
+          placement
+          player {
+            gamerTag
+            id
+          }
+        }
+      }
+      videogame {
+        id
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
 glicko2
 supabase
 dotenv
-request
+requests
