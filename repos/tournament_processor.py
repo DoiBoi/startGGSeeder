@@ -172,4 +172,4 @@ class TournamentProcessor:
         # Upsert videogame mapping
         self.supabase.upsert("videogame_mapping", [{"id": vid, "name": name} for vid, name in videogame_map.items()])
         if update_discriminator:
-            update_with_discriminator()
+            update_with_discriminator(self.supabase.client)

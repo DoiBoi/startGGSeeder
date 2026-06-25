@@ -54,12 +54,18 @@ tournament_slugs = [
     "ubc-fgc-winter-wavedash-2",
     "cascadia-cup-road-to-bobc",
     "ubc-fgc-summer-slam-5",
+    "ubc-fgc-autumn-assault-2",
+    "ubc-sunset-showdown-2",
+    "ubc-fgc-sunset-series-throwback"
 ]
 
 # series-based ones
 tournament_slugs += [f"party-battle-{i}" for i in range(1, 6 + 1)]
-tournament_slugs += [f"okizeme-{i}" for i in range(1, 49 + 1)]
+tournament_slugs += [f"okizeme-{i}" for i in range(1, 52 + 1)]
 tournament_slugs += [f"ubc-fgc-frenzy-friday-{i}" for i in range(1, 12 + 1)]
+tournament_slugs += [f"ubc-fgc-throwdown-thursday-{i}" for i in range(1, 7 + 1)]
+
+
 
 # Optional: de-dupe while preserving order
 seen = set()
@@ -155,10 +161,13 @@ def process_tournaments_from_mapping(
 
         # Run discriminator enrichment once at the end (much faster than per-tournament)
         from update import update_with_discriminator
-
-        update_with_discriminator()
         last_repo.set_timestamp(last_updated_key, max_end_at)
         print(f"Updated last_updated[{last_updated_key}] = {max_end_at}")
+
+        try:
+            update_with_discriminator(_supabase_service.client)
+        except Exception as err:
+            print(f"WARNING: discriminator enrichment failed: {type(err).__name__}: {err}")
     else:
         print("No tournaments found to process.")
 

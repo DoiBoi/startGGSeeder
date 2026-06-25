@@ -676,6 +676,9 @@ def run_query(query, variables=None, retries=0):
   base_sleep_429 = 30  # Backoff for rate limits
   base_sleep_timeout = 5  # Smaller backoff for transient slow responses
   base_sleep_connection = 30
+  base_sleep_server = 5  # Backoff for transient 5xx/proxy errors
+
+  transient_statuses = {500, 502, 503, 504, 520}
 
   while True:
     try:
@@ -702,11 +705,21 @@ def run_query(query, variables=None, retries=0):
         retries += 1
         continue
 
-      if response.status_code == 503:
-        msg = f"{datetime.now()} - Service unavailable. Waiting for 60 seconds before retrying..."
+      if response.status_code in transient_statuses:
+        retries += 1
+        if retries > max_retries:
+          raise Exception(
+            f"{datetime.now()} - Query failed with status {response.status_code} (max retries reached)."
+          )
+
+        sleep_time = base_sleep_server * (2 ** min(retries, 6))
+        msg = (
+          f"{datetime.now()} - Transient server error {response.status_code}, retrying "
+          f"({retries}/{max_retries}) in {sleep_time} seconds..."
+        )
         logger.warning(msg)
         print(msg)
-        time.sleep(60)
+        time.sleep(sleep_time)
         continue
 
       raise Exception(

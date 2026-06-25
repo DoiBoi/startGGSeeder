@@ -111,6 +111,16 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"],
         help="Logging verbosity.",
     )
+
+    p.add_argument(
+        "--update-discriminator",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "If true (default), run the discriminator enrichment step at the end. "
+            "Disable with --no-update-discriminator if start.gg is flaky or you want a faster run."
+        ),
+    )
     return p
 
 
@@ -238,9 +248,15 @@ def main() -> int:
         return 0
 
     if processed:
-        update_with_discriminator()
         last_repo.set_timestamp(args.last_updated_key, processed_max_end_at)
         print(f"Updated last_updated[{args.last_updated_key}] = {processed_max_end_at}")
+
+        if args.update_discriminator:
+            try:
+                update_with_discriminator(supabase.client)
+            except Exception:
+                logger.exception("Discriminator enrichment failed; continuing (last_updated was saved).")
+                print("WARNING: discriminator enrichment failed; see logs for details.")
     else:
         print("No tournaments found to process.")
 
