@@ -1,0 +1,10 @@
+query getEntrantIDs($id: ID!) {
+  entrant (id: $id) {
+    participants {
+      player {
+        gamerTag
+        id
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 from typing import List
-from connections.supabaseClient import SupabaseClient
-from connections.startgg import StartGGClient
+from utils.connections.supabaseClient import SupabaseClient
+from utils.connections.startgg import StartGGClient
+from utils.players import Players
 import math
 
 BASE_ENTRANT = 16
@@ -9,6 +10,7 @@ class Standings():
     def __init__(self, supabaseClient: SupabaseClient, startGGClient: StartGGClient):
         self.supabase = supabaseClient.getClient()
         self.startGGClient = startGGClient
+        self.players = Players(supabaseClient, self.startGGClient)
         pass
 
     def getStandings(self, videogameID=None):
@@ -33,15 +35,18 @@ class Standings():
                 .eq("game_id", videogameID)
                 .execute() 
             ).data
-        
+        players = []
+
         for points in standings:
             target = next((player for player in select_data if player["id"] == points["id"]), None)
             if (target is not None): points["points"] += target["points"]
-        
+            players.append(points["id"])
+
+        self.players.updatePlayers(players)
         self.supabase.table("local_points").upsert(standings).execute()
 
     def pullStandingsUpdate(self, slug):
-        response = self.startGGClient.runQuery("getStandings", {
+        response = self.startGGClient.runQuery(name="getStandings", variables={
             "slug": slug
         })
 
@@ -55,7 +60,7 @@ class Standings():
                 multiplier = round(math.sqrt(len(event["standings"]["nodes"])/BASE_ENTRANT))
                 match standing["placement"]:
                     case 1:
-                        points= 100 * multiplier
+                        points = 100 * multiplier
                     case 2:
                         points = 80 * multiplier
                     case 3:

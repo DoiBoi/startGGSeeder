@@ -1,0 +1,7 @@
+query getEvents($slug: String) {
+	tournament(slug: $slug) {
+    events {
+      id
+    }
+  }
+}

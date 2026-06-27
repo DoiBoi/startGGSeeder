@@ -1,0 +1,14 @@
+query getSet($id: ID!, $page: Int, $perPage: Int) {
+  event (id: $id) {
+    sets (page: $page, perPage: $perPage) {
+      nodes {
+        winnerId
+        slots {
+          entrant {
+            id
+          }
+        }
+      }
+    }
+  }
+}
