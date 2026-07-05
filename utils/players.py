@@ -1,6 +1,6 @@
 from typing import List
-from connections.supabaseClient import SupabaseClient
-from connections.startgg import StartGGClient
+from utils.connections.supabaseClient import SupabaseClient
+from utils.connections.startgg import StartGGClient
 
 BATCH_SIZE = 50
 

@@ -1,7 +1,7 @@
 from typing import List
-from connections.supabaseClient import SupabaseClient
-from connections.startgg import StartGGClient
-from players import Players
+from utils.connections.supabaseClient import SupabaseClient
+from utils.connections.startgg import StartGGClient
+from utils.players import Players
 import math
 
 BASE_ENTRANT = 16
@@ -79,7 +79,3 @@ class Standings():
                     "points": points
                 })
             self.updateStandings(videogameID, ret)
-
-if __name__ == "__main__":
-    standing = Standings(SupabaseClient(), StartGGClient())
-    standing.pullStandingsUpdate("ubc-fgc-thunderbird-summit")

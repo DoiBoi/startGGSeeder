@@ -1,10 +1,18 @@
 from typing import List
-from connections.supabaseClient import SupabaseClient
-from connections.startgg import StartGGClient
+from utils.connections.supabaseClient import SupabaseClient
+from utils.connections.startgg import StartGGClient
 from glicko2 import Player 
 import math
-import collections
-from players import Players
+from collections import defaultdict
+from utils.players import Players
+from utils.videogames import Videogames
+from datetime import datetime,timezone
+
+def new_player_entry():
+    return {
+        "player": Player(),
+        "appearances": 0,
+    }
 
 ENTRANTID_PERPAGE = 300
 SET_PERPAGE = 200
@@ -13,15 +21,17 @@ class Tournament:
     def __init__(self, 
                  supabaseClient: SupabaseClient, 
                  startGGClient: StartGGClient,
-                 slug: str = None):
+                 slug: str = None,
+                 savedGames = False):
         self.supabase = supabaseClient.getClient()
         self.startgg = startGGClient
         self.slug = slug if slug is not None else None
-        self.ids = None
+        self.ids = {}
         self.entrants = {}
         self.sets = {}
-        self.players = collections.defaultdict(dict) 
+        self.players = defaultdict(lambda: defaultdict(new_player_entry)) 
         self.new_players = set()
+        self.saved_games = savedGames
         pass
 
     def getEvents(self, slug=None) -> List[object]:
@@ -31,14 +41,22 @@ class Tournament:
         response = self.startgg.runQuery(name="getEvents", variables={
             "slug": self.slug
         })
+        
+        print(f"Retrieving {self.slug}")
+        self.name = response["data"]["tournament"]["name"]
+        self.id = response["data"]["tournament"]["id"]
+        self.startAt = response["data"]["tournament"]["startAt"]
 
-        self.ids = {event["id"]: event["videogame"]["id"] for event in response["data"]["tournament"]["events"]}
+        if self.saved_games:
+            games = self.supabase.table("videogame_mapping").select("id").execute().data
+            games = [game["id"] for game in games]
+            self.ids = {event["id"]: event["videogame"]["id"] for event in response["data"]["tournament"]["events"] if event["videogame"]["id"] in games}
+        else:
+            self.ids = {event["id"]: event["videogame"]["id"] for event in response["data"]["tournament"]["events"]}
 
         return self.ids
     
     def getEntrants(self, ids=None) -> List[object]: 
-        if not self.ids:
-            self.ids = ids
         for id in self.ids:
             pages = self.startgg.runQuery(name="getTotalPages", variables={
                 "id": id,
@@ -65,7 +83,7 @@ class Tournament:
     
     def transformSets(self, set, event):
         display_score = set["displayScore"]
-        if "DQ" in display_score:
+        if not display_score or "DQ" in display_score:
             return
         ids = [slot["entrant"]["id"] for slot in set["slots"]]
         winner = set["winnerId"]
@@ -75,7 +93,7 @@ class Tournament:
         return { "winner": winner, "loser": loser }
     
     def getSets(self):        
-        if self.ids == None:
+        if not self.ids:
             self.getEvents()
         if not self.entrants: 
             self.getEntrants()
@@ -107,12 +125,13 @@ class Tournament:
             self.supabase
                 .table("ranking")
                 .select("*")
-                .in_("game_id", list(self.ids.keys()))
+                .in_("game_id", list(self.ids.values()))
                 .execute()
         ).data
         
         data.sort(key=lambda item: item["game_id"])
         
+                
         for entry in data:
             player_entry = {
                 "player": Player(rating=entry["rating"], rd=entry["rd"]),
@@ -155,7 +174,7 @@ class Tournament:
         self.populateDataFromSupabase()
         print("Converting to Glicko2")
         for videogame, sets in self.sets.items():
-            history = collections.defaultdict(lambda: {"ratings": [], "rds": [], "outcomes": []}) 
+            history = defaultdict(lambda: {"ratings": [], "rds": [], "outcomes": []}) 
             for set in sets:
                 if not set:
                     continue
@@ -182,9 +201,13 @@ class Tournament:
                     hist["outcomes"]
                 )
         return True
+
     
     def parseAndUpload(self):
         self.convertToGlicko2()
+        if not self.saved_games:
+            print("Updating games")
+            Videogames(SupabaseClient(), self.startgg, self.slug).updateGames()
         print("Updating new players onto database")
         Players(SupabaseClient(), self.startgg).updatePlayers(list(self.new_players))
         print("Building batch for supabase upload")
@@ -199,13 +222,22 @@ class Tournament:
                     "appearances": player_obj["appearances"] + 1
                 })
         print("Sending to supabase")
+        if not batch:
+            print("No rows to upload")
+            return True
         (self.supabase.table("ranking")
             .upsert(batch)
             .execute()
         )
+        (self.supabase.table("history").upsert({
+            "id": self.id,
+            "name": self.name,
+            "startAt": datetime.fromtimestamp(self.startAt, tz=timezone.utc).isoformat(),
+            "slug": self.slug
+        }).execute())
         print("Done")
         return True
 
 if __name__ == "__main__":
-    tournament = Tournament(SupabaseClient(), StartGGClient(), "okizeme-53")
+    tournament = Tournament(SupabaseClient(), StartGGClient(), "okizeme-53", True)
     tournament.parseAndUpload()
