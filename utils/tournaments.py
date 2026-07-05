@@ -79,6 +79,12 @@ class Tournament:
             self.entrants.update({
                 id: event_entrants
             })
+            self.player_ids = {
+                player_id 
+                for event_entrants in self.entrants.values()
+                for entrant_players in event_entrants.values()
+                for player_id in entrant_players 
+            }
         return self.entrants
     
     def transformSets(self, set, event):
@@ -233,7 +239,8 @@ class Tournament:
             "id": self.id,
             "name": self.name,
             "startAt": datetime.fromtimestamp(self.startAt, tz=timezone.utc).isoformat(),
-            "slug": self.slug
+            "slug": self.slug,
+            "players": list(self.player_ids)
         }).execute())
         print("Done")
         return True
