@@ -3,6 +3,7 @@ import requests
 from dotenv import load_dotenv
 from pathlib import Path
 from typing import List
+import time
 
 load_dotenv()
 
@@ -36,9 +37,20 @@ class StartGGClient():
                 json={"query": query, "variables": variables},
                 headers=headers
             )
+            
+            response_data = response.json()
 
-            if response.status_code == 200:
-                return response.json()
+            while response_data is None or response_data.get("data") is None or response_data.get("error"):
+                print(f"Something went wrong, trying again in 30 seconds\nResponse:\n{response}")
+                time.sleep(30)
+                response = requests.post(
+                    str(self.url),
+                    json={"query": query, "variables": variables},
+                    headers=headers
+                )
+            response_data = response.json()
+            return response_data
+                
         except Exception as e: 
             print(f"An error occured in run_query:\n{e}") 
 

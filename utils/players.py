@@ -1,6 +1,6 @@
 from typing import List
-from utils.connections.supabaseClient import SupabaseClient
-from utils.connections.startgg import StartGGClient
+from connections.supabaseClient import SupabaseClient
+from connections.startgg import StartGGClient
 
 BATCH_SIZE = 50
 
@@ -54,10 +54,11 @@ class Players():
             response = self.startGG.runQuery(query=query, variables=variables)
             payload = []
             for player in response["data"].values(): # type: ignore
+                # print(player)
                 payload.append({
                     "player_id": player["id"],
                     "name": player["gamerTag"],
-                    "discriminator": player["user"]["discriminator"]
+                    "discriminator": player["user"]["discriminator"] if player["user"] is not None else "None"
                 })
             self.supabase.table("player_table").insert(payload).execute()
-    print("Successfully updated player table")
+        print("Successfully updated player table")

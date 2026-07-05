@@ -1,7 +1,7 @@
 from typing import List
-from utils.connections.supabaseClient import SupabaseClient
-from utils.connections.startgg import StartGGClient
-from utils.players import Players
+from connections.supabaseClient import SupabaseClient
+from connections.startgg import StartGGClient
+from players import Players
 import math
 
 BASE_ENTRANT = 16

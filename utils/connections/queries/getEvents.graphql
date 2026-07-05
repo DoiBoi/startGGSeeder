@@ -4,6 +4,9 @@ query getEvents($slug: String) {
     events {
       name
       id
+      videogame {
+        id
+      }
     }
   }
 }
