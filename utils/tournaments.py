@@ -142,7 +142,7 @@ class Tournament:
                     .limit(BATCH_SIZE)
             )
             if lastId is not None:
-                query = query.gt("id", lastId)
+                query = query.gt("player_id", lastId)
             
             response = query.execute()
             batch = response.data
