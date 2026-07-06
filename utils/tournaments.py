@@ -137,7 +137,7 @@ class Tournament:
                 self.supabase
                     .table("ranking")
                     .select("*")
-                    .order("id", desc=False)
+                    .order("player_id", desc=False)
                     .in_("game_id", list(self.ids.values()))
                     .limit(BATCH_SIZE)
             )
