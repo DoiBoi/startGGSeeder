@@ -18,6 +18,7 @@ def new_player_entry():
 
 ENTRANTID_PERPAGE = 300
 SET_PERPAGE = 195
+BATCH_SIZE = 1_000
 
 class Tournament:
     def __init__(self, 
@@ -129,14 +130,30 @@ class Tournament:
     
     def populateDataFromSupabase(self):
         print("Pulling data from supabase")
-        data = (
-            self.supabase
-                .table("ranking")
-                .select("*")
-                .in_("game_id", list(self.ids.values()))
-                .execute()
-        ).data
+        data = []
+        lastId = None
+        while True:
+            query = (
+                self.supabase
+                    .table("ranking")
+                    .select("*")
+                    .order("id", desc=False)
+                    .in_("game_id", list(self.ids.values()))
+                    .limit(BATCH_SIZE)
+            )
+            if lastId is not None:
+                query = query.gt("id", lastId)
+            
+            response = query.execute()
+            batch = response.data
+            
+            if not batch:
+                break
+            
+            data.extend(batch)
         
+            lastId = batch[-1]["id"]
+        print(f"Fetched batch... Total collected items: {len(data)}")
         data.sort(key=lambda item: item["game_id"])
         
                 
