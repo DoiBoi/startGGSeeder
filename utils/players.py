@@ -60,5 +60,5 @@ class Players():
                     "name": player["gamerTag"],
                     "discriminator": player["user"]["discriminator"] if player["user"] is not None else "None"
                 })
-            self.supabase.table("player_table").insert(payload).execute()
+            self.supabase.table("player_table").upsert(payload, on_conflict="player_id").execute()
         print("Successfully updated player table")

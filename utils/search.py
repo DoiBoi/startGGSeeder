@@ -1,6 +1,7 @@
 from utils.connections.supabaseClient import SupabaseClient
 from utils.connections.startgg import StartGGClient
 from utils.tournaments import Tournament
+import time
 
 PERPAGE = 256
 

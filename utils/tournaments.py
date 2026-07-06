@@ -7,6 +7,8 @@ from collections import defaultdict
 from utils.players import Players
 from utils.videogames import Videogames
 from datetime import datetime,timezone
+import time
+
 
 def new_player_entry():
     return {
@@ -15,7 +17,7 @@ def new_player_entry():
     }
 
 ENTRANTID_PERPAGE = 300
-SET_PERPAGE = 200
+SET_PERPAGE = 195
 
 class Tournament:
     def __init__(self, 
@@ -230,7 +232,7 @@ class Tournament:
         print("Sending to supabase")
         if not batch:
             print("No rows to upload")
-            return True
+            return
         (self.supabase.table("ranking")
             .upsert(batch)
             .execute()
