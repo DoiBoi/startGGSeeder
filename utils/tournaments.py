@@ -152,7 +152,7 @@ class Tournament:
             
             data.extend(batch)
         
-            lastId = batch[-1]["id"]
+            lastId = batch[-1]["player_id"]
         print(f"Fetched batch... Total collected items: {len(data)}")
         data.sort(key=lambda item: item["game_id"])
         
