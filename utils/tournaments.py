@@ -46,9 +46,12 @@ class Tournament:
         })
         
         print(f"Retrieving {self.slug}")
+        if not response: return self.ids
         self.name = response["data"]["tournament"]["name"]
         self.id = response["data"]["tournament"]["id"]
         self.startAt = response["data"]["tournament"]["startAt"]
+        if response["data"]["tournament"]["events"] is None:
+            return self.ids
 
         if self.saved_games:
             games = self.supabase.table("videogame_mapping").select("id").execute().data
