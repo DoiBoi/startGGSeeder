@@ -57,7 +57,7 @@ class Standings():
             videogameID = event["videogame"]["id"]
             for standing in event["standings"]["nodes"]:
                 points = 5
-                multiplier = round(math.sqrt(len(event["standings"]["nodes"])/BASE_ENTRANT))
+                multiplier = round(math.sqrt(len(event["standings"]["nodes"])/BASE_ENTRANT), 2)
                 match standing["placement"]:
                     case 1:
                         points = 100 * multiplier
@@ -76,6 +76,6 @@ class Standings():
                 ret.append({
                     "id": standing["player"]["id"],
                     "game_id": videogameID,
-                    "points": points
+                    "points": round(points)
                 })
             self.updateStandings(videogameID, ret)
