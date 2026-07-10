@@ -3,13 +3,16 @@ from utils.connections.supabaseClient import SupabaseClient
 from utils.connections.startgg import StartGGClient
 from utils.players import Players
 import math
+import collections
 
 BASE_ENTRANT = 16
+STANDINGS_PERPAGE = 256
 
 class Standings():
     def __init__(self, supabaseClient: SupabaseClient, startGGClient: StartGGClient):
         self.supabase = supabaseClient.getClient()
         self.startGGClient = startGGClient
+        self.standings = collections.defaultdict()
         self.players = Players(supabaseClient, self.startGGClient)
         pass
 
@@ -45,19 +48,52 @@ class Standings():
         self.players.updatePlayers(players)
         self.supabase.table("local_points").upsert(standings).execute()
 
+    def processEventStanding(self, eventId):
+        response = self.startGGClient.runQuery(name="getStandingPages", variables = {
+            "id": eventId,
+            "page": 1,
+            "perPage": STANDINGS_PERPAGE
+        })
+        
+        pages = response["data"]["event"]["standings"]["pageInfo"]["totalPages"]
+        
+        ret = []
+        
+        for page in range(1, pages+1):
+            response = self.startGGClient.runQuery(name="getStandings", variables={
+                "id": eventId,
+                "page": page,
+                "perPage": STANDINGS_PERPAGE
+            })
+            
+            
+            nodes = response["data"]["event"]["standings"]["nodes"]
+            if not nodes: continue
+            
+            ret.extend(nodes)
+            
+        return ret
+            
+
     def pullStandingsUpdate(self, slug):
-        response = self.startGGClient.runQuery(name="getStandings", variables={
+        response = self.startGGClient.runQuery(name="getEvents", variables={
             "slug": slug
         })
 
         if response["data"]["tournament"] == None: return print("Tournament not found!")
-        response = response["data"]["tournament"]["events"]
-        for event in response:
+        events = response["data"]["tournament"]["events"]
+        for event in events:
+            standing = self.processEventStanding(event["id"])
+            game = event["videogame"]["id"]
+            self.standings[game] = standing
+        
+        for videogameID, standings in self.standings.items():
             ret = []
-            videogameID = event["videogame"]["id"]
-            for standing in event["standings"]["nodes"]:
+            standings = [player for player in standings if player["entrant"]["isDisqualified"] is None]
+            for standing in standings:
+                if standing["player"] is None: continue
                 points = 5
-                multiplier = round(math.sqrt(len(event["standings"]["nodes"])/BASE_ENTRANT), 2)
+                multiplier = round(math.sqrt(len(standings)/BASE_ENTRANT), 2)
                 match standing["placement"]:
                     case 1:
                         points = 100 * multiplier
