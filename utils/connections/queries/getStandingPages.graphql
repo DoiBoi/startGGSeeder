@@ -1,0 +1,9 @@
+query getStandingPages($id: ID!, $page: Int, $perPage: Int) {
+  event (id: $id) {
+    standings(query: {page: $page, perPage: $perPage}) {
+      pageInfo {
+        totalPages
+      }
+    }
+  }
+}

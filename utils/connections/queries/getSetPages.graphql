@@ -1,0 +1,9 @@
+query getSetPages($id: ID!, $page: Int, $perPage: Int) {
+  event (id: $id) {
+    sets (page: $page, perPage: $perPage) {
+      pageInfo {
+        totalPages
+      }
+    }
+  }
+}

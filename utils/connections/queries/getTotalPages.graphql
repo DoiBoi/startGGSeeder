@@ -1,0 +1,10 @@
+query getTotalPages($id: ID!, $perPage: Int, $page: Int) {
+  event(id: $id) {
+    name
+    entrants(query: { perPage: $perPage, page: $page }) {
+      pageInfo {
+        totalPages
+      }
+    }
+  }
+}

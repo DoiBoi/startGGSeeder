@@ -1,0 +1,16 @@
+query getTournamentPages($page: Int, $perPage: Int, $country: String, $state: String, $beforeDate: Timestamp, $afterDate: Timestamp) {
+  tournaments (query: {
+    page: $page,
+    perPage: $perPage
+    filter: {
+      countryCode: $country,
+      addrState: $state
+      beforeDate: $beforeDate,
+      afterDate: $afterDate
+    }
+  }) {
+    pageInfo {
+      totalPages
+    }
+  }
+}
